@@ -1,234 +1,188 @@
-# 🌤️ Estação Meteorológica Embarcada
+🌤️ Estação Meteorológica Embarcada
+Sistema completo de monitoramento meteorológico baseado no Raspberry Pi Pico W com interface web responsiva, sensores I²C, alertas visuais e sonoros — ideal para aplicações IoT.
 
-Sistema completo de monitoramento meteorológico baseado em Raspberry Pi Pico com interface web em tempo real, sensores múltiplos e sistema de alertas.
+📋 Descrição
+Este projeto implementa uma estação meteorológica embarcada que coleta e exibe, em tempo real, dados de temperatura, umidade, pressão e altitude. As leituras são feitas com sensores de alta precisão e exibidas tanto localmente (via display OLED e matriz de LEDs) quanto remotamente (via interface web). O sistema inclui alertas automáticos quando valores saem de limites configurados.
 
-## 📋 Descrição
+🎯 Funcionalidades
+Leitura em Tempo Real dos sensores AHT20 (temperatura/umidade) e BMP280 (pressão/temperatura).
 
-Este projeto implementa uma estação meteorológica embarcada que monitora temperatura, umidade, pressão atmosférica e altitude em tempo real. O sistema oferece interface local através de display OLED, indicadores visuais com matriz de LEDs, alertas sonoros e acesso remoto via servidor web responsivo.
+Exibição Local via display OLED SSD1306 com múltiplas telas navegáveis.
 
-## 🎯 Funcionalidades
+Alertas Visuais por matriz de LEDs RGB WS2812B.
 
-- **Monitoramento em Tempo Real**: Leitura contínua de sensores AHT20 e BMP280
-- **Interface Local**: Display OLED com múltiplas telas de navegação
-- **Indicadores Visuais**: Matriz de LEDs WS2812B com padrões de status
-- **Sistema de Alertas**: Notificações sonoras e visuais para valores fora dos limites
-- **Servidor Web**: Dashboard interativo com gráficos em tempo real
-- **Configuração Remota**: Ajuste de limites e calibração via interface web
-- **Conectividade Wi-Fi**: Acesso remoto através de rede local
+Alertas Sonoros com buzzer duplo controlado por PWM.
 
-## 🛠️ Componentes Hardware
+Dashboard Web com gráficos atualizados dinamicamente (AJAX + JSON).
 
-### Microcontrolador
-- **Raspberry Pi Pico**: Unidade central de processamento
+Calibração e Configuração de limites diretamente pela interface web.
 
-### Sensores
-- **AHT20**: Sensor de temperatura e umidade relativa
-- **BMP280**: Sensor de pressão atmosférica e temperatura
+Conectividade Wi-Fi com visualização do IP no display.
 
-### Interface de Usuário
-- **SSD1306**: Display OLED 128x64 pixels
-- **WS2812B**: Matriz de LEDs 5x5 pixels
-- **Buzzers**: Sistema de alerta sonoro (2 unidades)
-- **Botões**: Navegação e reset do sistema
+🛠️ Componentes de Hardware
+🧠 Microcontrolador
+Raspberry Pi Pico W – CPU principal com Wi-Fi embutido (CYW43)
 
-### Comunicação
-- **CYW43**: Módulo Wi-Fi integrado
+🌡️ Sensores
+AHT20 – Temperatura e umidade
 
-## 📁 Estrutura do Projeto
+BMP280 – Pressão e temperatura, cálculo de altitude
 
-```
-Embarcatech_F2T11_estacao_meteorologica/
-├── Embarcatech_F2T11_estacao_meteorologica.c  # Arquivo principal
-├── CMakeLists.txt                              # Configuração de build
-├── ws2812.pio                                  # Programa PIO para LEDs
-└── lib/                                        # Bibliotecas de sensores
-    ├── aht20.c/h                              # Driver sensor AHT20
-    ├── bmp280.c/h                             # Driver sensor BMP280
-    ├── ssd1306.c/h                            # Driver display OLED
-    └── font.h                                 # Fontes para display
-```
+💡 Interface com Usuário
+Display OLED (SSD1306) – 128x64 via I2C
 
-## 🔧 Configuração e Instalação
+Matriz de LEDs WS2812B – 5x5 LEDs endereçáveis RGB
 
-### Pré-requisitos
-- Raspberry Pi Pico
-- Pico SDK configurado
-- Sensores e componentes listados
-- Conexão Wi-Fi disponível
+LEDs Individuais RGB – Verde (status ok), azul (conectando), vermelho (erro)
 
-### Conexões Hardware
+Buzzers (2x) – PWM para sinal sonoro de alerta
 
-#### I2C Sensores (i2c0)
-- **SDA**: GPIO 0
-- **SCL**: GPIO 1
-- **Sensores**: AHT20, BMP280
+Botões físicos – Navegação entre telas e reset (via joystick)
 
-#### I2C Display (i2c1)
-- **SDA**: GPIO 14
-- **SCL**: GPIO 15
-- **Display**: SSD1306 (Endereço 0x3C)
+🔌 Pinagem e Conexões
+Sensores I2C – i2c0
+SDA: GPIO 0
 
-#### Controles
-- **Botão A**: GPIO 5 (Navegação)
-- **Botão B**: GPIO 6 (Navegação)
-- **Joystick**: GPIO 22 (Reset)
+SCL: GPIO 1
 
-#### LEDs e Indicadores
-- **Matriz LED**: GPIO 7 (WS2812B)
-- **LED Verde**: GPIO 11
-- **LED Azul**: GPIO 12
-- **LED Vermelho**: GPIO 13
+Display OLED – i2c1
+SDA: GPIO 14
 
-#### Alertas Sonoros
-- **Buzzer A**: GPIO 21
-- **Buzzer B**: GPIO 10
+SCL: GPIO 15
 
-### Configuração de Rede
-Edite as credenciais Wi-Fi no arquivo principal:
-```c
-#define WIFI_SSID "Sua_Rede_WiFi"
-#define WIFI_PASS "Sua_Senha_WiFi"
-```
+Endereço: 0x3C
 
-### Compilação
-```bash
-mkdir build
-cd build
+LEDs e Buzzer
+Matriz WS2812B: GPIO 7
+
+LED Verde: GPIO 11
+
+LED Azul: GPIO 12
+
+LED Vermelho: GPIO 13
+
+Buzzer A: GPIO 21
+
+Buzzer B: GPIO 10
+
+Botões
+Botão A: GPIO 5
+
+Botão B: GPIO 6
+
+Joystick (Reset): GPIO 22
+
+🌐 Interface Web
+Página HTML responsiva (mobile e desktop)
+
+Dashboard com gráficos em tempo real (Chart.js)
+
+Formulários para:
+
+Definir limites (mín/máx) de temperatura e umidade
+
+Calibrar offsets de sensores
+
+Atualização via JSON (AJAX) a cada segundo
+
+Servidor HTTP próprio via Wi-Fi
+
+🚦 Estados do Sistema
+Estado	LED RGB	Buzzer	Matriz de LEDs
+Conectado	Verde	—	Padrão verde
+Conectando	Azul	—	—
+Erro de conexão	Vermelho	—	—
+Alerta disparado	—	1000Hz, 200ms	Padrão vermelho
+Dentro dos limites	—	—	Padrão normal verde
+
+🧠 Lógica de Funcionamento
+Leitura contínua dos sensores com tratamento de erro
+
+Atualização de display e interface web a cada 300ms
+
+Trigger automático de alertas com base em limites definidos
+
+Navegação entre telas com botões físicos
+
+Reset via botão de joystick
+
+📁 Estrutura do Projeto
+bash
+Copiar
+Editar
+estacao_meteorologica/
+├── main.c                          # Código principal
+├── CMakeLists.txt                  # Build system
+├── ws2812.pio                      # Programa PIO para matriz de LEDs
+└── lib/                            # Drivers dos periféricos
+    ├── aht20.c/h                   # AHT20
+    ├── bmp280.c/h                  # BMP280
+    ├── ssd1306.c/h                 # Display OLED
+    └── font.h                      # Fonte usada no display
+🔧 Compilação e Instalação
+1. Edite as credenciais Wi-Fi:
+c
+Copiar
+Editar
+#define WIFI_SSID "Seu_SSID"
+#define WIFI_PASS "Sua_Senha"
+2. Compile o projeto:
+bash
+Copiar
+Editar
+mkdir build && cd build
 cmake ..
 make
-```
+3. Envie o .uf2 para o Pico:
+bash
+Copiar
+Editar
+cp estacao_meteorologica.uf2 /media/pico/
+🚀 Execução
+Conecte os componentes conforme a pinagem
 
-### Upload
-```bash
-cp Embarcatech_F2T11_estacao_meteorologica.uf2 /media/pico/
-```
+Alimente o Raspberry Pi Pico
 
-## 🚀 Operação
+O sistema inicializa e tenta conectar ao Wi-Fi
 
-### Inicialização
-1. Conecte o hardware conforme especificado
-2. Alimente o Raspberry Pi Pico
-3. Aguarde a inicialização dos sensores
-4. Verifique a conexão Wi-Fi no display
-5. Acesse o endereço IP exibido no navegador
+Após conexão, o IP é exibido no display
 
-### Interface Local
-- **Tela 1**: Status Wi-Fi e endereço IP
-- **Tela 2**: Dados dos sensores (temperatura, pressão, altitude, umidade)
-- **Tela 3**: Configurações de temperatura e alertas
-- **Tela 4**: Configurações de umidade e alertas
+Acesse o IP no navegador para abrir a interface web
 
-### Navegação
-- **Botão A**: Navegar para tela anterior
-- **Botão B**: Navegar para próxima tela
-- **Joystick**: Reset do sistema
+📊 Especificações Técnicas
+Parâmetro	Sensor	Faixa / Precisão
+Temperatura	AHT20	-40°C a +85°C (±0.3°C)
+Umidade	AHT20	0–100% UR (±2%)
+Pressão	BMP280	300–1100 hPa (±1 hPa)
+Altitude (calc.)	BMP280	~0–9000m (estimado)
 
-## 🌐 Interface Web
+Comunicação I²C @ 400kHz
 
-### Dashboard Principal
-- Gráficos em tempo real dos últimos 20 pontos
-- Valores atuais com formatação adequada
-- Médias calculadas automaticamente
-- Design responsivo para dispositivos móveis
+Atualização: 300ms por ciclo
 
-### Configuração de Limites
-- Temperatura mínima e máxima
-- Umidade mínima e máxima
-- Aplicação imediata das configurações
+Histórico: 20 pontos por gráfico
 
-### Calibração de Sensores
-- Offset de temperatura
-- Offset de pressão
-- Offset de altitude
-- Offset de umidade
+Servidor: HTTP porta 80
 
-## 📊 Especificações Técnicas
+🧪 Aplicações
+Monitoramento ambiental (salas, estufas, ar-condicionado)
 
-### Sensores
-- **AHT20**: 
-  - Temperatura: -40°C a +85°C (±0.3°C)
-  - Umidade: 0-100% (±2%)
-- **BMP280**:
-  - Pressão: 300-1100 hPa (±1 hPa)
-  - Temperatura: -40°C a +85°C (±0.5°C)
+Coleta de dados para IoT
 
-### Comunicação
-- **I2C**: 400 kHz para sensores e display
-- **Wi-Fi**: 802.11 b/g/n
-- **Servidor Web**: Porta 80
+Controle de sistemas de climatização (HVAC)
 
-### Atualização de Dados
-- **Frequência**: A cada 300ms
-- **Histórico**: 20 pontos por sensor
-- **Latência**: < 1 segundo
+Educação em sistemas embarcados e web
 
-## 🔍 Monitoramento e Alertas
+👨‍💻 Autor
+Samuel Guedes Canário
 
-### Condições de Alerta
-- Temperatura fora dos limites configurados
-- Umidade fora dos limites configurados
-- Falha na leitura de sensores
-- Perda de conectividade Wi-Fi
+Projeto individual — Polo: Bom Jesus da Lapa
 
-### Indicadores Visuais
-- **Normal**: Padrão verde na matriz de LEDs
-- **Alerta**: Padrão vermelho na matriz de LEDs
-- **Status Wi-Fi**: LEDs RGB indicam estado da conexão
+Curso: Desenvolvimento de Sistemas Embarcados IoT – BitDogLab
 
-### Alertas Sonoros
-- **Frequência**: 1000 Hz
-- **Duração**: Configurável (padrão 200ms)
-- **Ativação**: Mudanças de configuração e alertas
-
-## 🛡️ Tratamento de Erros
-
-### Robustez do Sistema
-- Verificação contínua de conectividade Wi-Fi
-- Tratamento de falhas de leitura de sensores
-- Sistema de debounce para botões
-- Recuperação automática de erros temporários
-
-### Logs e Debug
-- Mensagens de debug via UART
-- Indicadores visuais de status
-- Feedback sonoro para operações críticas
-
-## 📈 Aplicações
-
-### Monitoramento Ambiental
-- Estações meteorológicas
-- Estufas e agricultura
-- Laboratórios e salas de controle
-- Monitoramento industrial
-
-### IoT e Automação
-- Integração com sistemas de automação
-- Coleta de dados para análise
-- Alertas automáticos
-- Controle de HVAC
-
-## 🤝 Contribuição
-
-Para contribuir com o projeto:
-
-1. Faça um fork do repositório
-2. Crie uma branch para sua feature
-3. Implemente as mudanças
-4. Teste adequadamente
-5. Envie um pull request
+🎥 Demonstração
+📹 Link para vídeo: [https://youtu.be/VvGa0-rqYi8]
+💾 Código-fonte completo: [https://github.com/SamuelGuedesCanario/Temp-Humid.git]
+Link do Relatório Completo: [https://1drv.ms/b/c/d93638f8ce3970bd/ETkuQVbb_FdOm_EF3KKsdmwB_yfD_6y-2B3B-L3U4hklNg?e=sl3ogr]
 
 
-## 👥 Autores
-
-- **Muriel Costa**
-- **Projeto**: Estação Meteorológica Embarcada
-- **Versão**: 1.0
-
-## 📞 Suporte
-
-Para dúvidas ou problemas:
-- Abra uma issue no repositório
-- Consulte a documentação técnica
-- Verifique as conexões hardware
-
----
